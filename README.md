@@ -23,6 +23,15 @@ end
 scheduler.cron '' do
 end
 
+require 'rufus-scheduler'
+scheduler = Rufus::Scheduler.new
+scheduler.in '' do
+  puts "10 days reminder for review X!"
+end
+scheduler.at '' do
+  puts "merry xmas!"
+end
+
 
 
 ```
