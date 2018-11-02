@@ -35,6 +35,7 @@ end
 require 'rufus-scheduler'
 scheduler = Rufus::Scheduler.new
 scheduler.every '' do
+  put "change the oil filter!"
 end
 scheduler.interval '' do
   puts ""
