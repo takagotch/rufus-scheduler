@@ -32,7 +32,14 @@ scheduler.at '' do
   puts "merry xmas!"
 end
 
-
+require 'rufus-scheduler'
+scheduler = Rufus::Scheduler.new
+scheduler.every '' do
+end
+scheduler.interval '' do
+end
+scheduler.cron '' do
+end
 
 ```
 
