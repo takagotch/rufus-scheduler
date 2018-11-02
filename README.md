@@ -86,7 +86,17 @@ class Handler
 end
 scheduler.in '10d', Handler
 
-
+class OtherHandler
+  def initialize(name)
+    @name = name
+  end
+  def call(job, time)
+    p ""
+  end
+end
+oh = OtherHandler.new('Doe')
+scheduler.every '', oh
+scheduler.in '', oh
 
 ```
 
