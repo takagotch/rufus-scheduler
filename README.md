@@ -37,8 +37,12 @@ scheduler = Rufus::Scheduler.new
 scheduler.every '' do
 end
 scheduler.interval '' do
+  puts ""
+  puts sleep(rand * 1000)
+  puts "thought."
 end
 scheduler.cron '' do
+  puts "it's 9am! good morning!"
 end
 
 ```
