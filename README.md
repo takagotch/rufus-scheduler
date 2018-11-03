@@ -101,8 +101,24 @@ scheduler.in '', oh
 ```
 
 ```ruby
+scheduler.cron '0 22 * * 1-5 America/Chicago' do
+end
+scheduler.at '2018-11-03 14:00 Pacific/Samoa' do
+  puts "it's tea time!"
+end
+Rufus::Scheduler.parse("2018-11-03 14:00 Pacific/Saipan")
 
+ENV['TZ'] = 'Asia/Shanghai'
+scheduler = Rufus::Scheduler.new
+scheduler.every '2s' do
+  puts "#{Time.now} Hello #{ENV['TZ']}"
+end
 
+ENV['TZ'] = Time.zone.name
+scheduler = Rufus::Scheduler.new
+scheduler.every '2s' do
+  puts "#{Time.now} Hello #{ENV['TZ']}"
+end
 
 gem 'tzinfo-data'
 require 'tzinfo/data'
