@@ -269,15 +269,44 @@ job.call(true)
 
 
 
+class PingLock
+  def initizlize(other_host)
+    @other_host = other_host
+  end
+  def lock
+    ! system("ping -c 1 #{@other_host}")
+  end
+end
+scheduler = Rufus::Scheduler.new(:trigger_lock => PingLock.new('main.example.com'))
 
+scheduler = Rufus::Scheduler.new(:max_work_threads => 77)
 
+scheduler.max_work_threads += 10
 
+Rufus::Scheduler.singleton.every '10s' { puts "hello" }
+Rufus::Scheduler.singleton(:max_work_threads => 77)
+Rufus::Scheduler.singleton(:max_work_threads => 277)
 
-
-
-
-
-
+class ZookeptScheduler < Rufus::Scheduler
+  def initialize(zookeeper, opts={})
+    @zk = zookeeper
+    super(opts)
+  end
+  def lock
+    @zk_locker = @zk.exclusive_locker('scheduler')
+    @zk_locker.lock
+  end
+  def unlock
+    @zk_locker.unlock
+  end
+  def confirm_lock
+    return false if down?
+    @zk_locker.assert!
+  rescue ZK::Exceptions::LockAssertionFailedError => e
+    shutdown
+    false
+  end
+end
 
 require 'rufus-scheduler'
 Rufus::Scheduler.parse('1w2d')
