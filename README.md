@@ -260,14 +260,87 @@ job.call(true)
 
 
 ```ruby
+require 'rufus-scheduler'
+scheduler = Rufus::Scheduler.new
+job_id =
+  scheduler.in '10d' do
+  end
+job = scheduler.job(job_id)
 
+scheduler.at_jobs.each(&:unschedule)
 
+scheduler.in '10d', :tag => 'main_process' do
+end
+scheudler.in '', :tag => [ 'main_process', 'side_dish' ] do
+end
+jobs = scheduler.job(:tag => 'main_process')
+jobs = scheduler.jobs(:tags => [ 'main_process', 'side_dish' ])
 
+scheduler.every '10m' do
+  begin
+  rescue => e
+    $stderr.puts '-' * 80
+    $stderr.put e.message
+    $stderr.puts e.stacktrace
+    $stderr.puts '-' * 80
+  end
+end
 
+scheduler.every '', Class.new do
+  def call(job)
+  rescue => e
+    $stderr.puts '0' * 80
+    $stderr.puts e.message
+    $stderr.puts e.stacktrace
+    $stderr.puts '-' * 80
+  end
+end
 
+$stderr = File.open('/var/log/myapplication.log', 'ab')
+scheduler.stderr = File.open('/var/log/myapplication.log', 'ab')
 
+def scheduler.on_error(job, error)
+  Logger.warn("intercepted error in #{job.id}: #{error.message}")
+end
 
+def scheduler.on_error(job, error)
+  Rails.logger.error(
+    "err#{error.object_id} rufus-scheduler intercepted #{error.insepct}" +
+    " in job #{job.insepct}")
+    Rails.logger.error(
+      "err#{error.object_id} #{i}: #{line}")
+end
 
+s = Rufus::Scheduler.new
+def s.on_pre_trigger(job, tigger_time)
+  puts "triggering job #{job.id}"
+end
+def s.on_post_trigger(job, trigger_time)
+  puts "triggered job #{job.id}"
+end
+s.every '1s' do
+end
+
+def s.on_pre_trigger(job, trigger_time)
+  return false if Backend.down?
+  puts "triggering job #{job.id}"
+end
+
+scheduler = Rufus::Scheduler.new(:frequency => 5)
+scheduler = Rufus::Scheduler.new(:frequency => '2h10m')
+
+class HostLock
+  def initialize(lock_name)
+    @lock_name = lock_name
+  end
+  def lock
+    @lock_name = `hostname -f`.strip
+  end
+  def unlock
+    true
+  end
+end
+scheduler = Rufus::Scheduler.new(:scheduler_lock => HostLock.new('coffee.example.com'))
 
 class PingLock
   def initizlize(other_host)
