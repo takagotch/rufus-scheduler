@@ -16,53 +16,55 @@ require 'rugus-scheduler'
 scheduler = Rufus::Scheduler.new
 scheduler.in '10d' do
 end
+scheduler.every '2030/11/03 13:47:00' do
+end
 scheduler.every '3h' do
 end
-scheduler.every '' do
+scheduler.cron '3h10m' do
 end
-scheduler.cron '' do
+scheduler.cron '5 0 * * *' do
 end
 
 require 'rufus-scheduler'
 scheduler = Rufus::Scheduler.new
-scheduler.in '' do
+scheduler.in '10d' do
   puts "10 days reminder for review X!"
 end
-scheduler.at '' do
+scheduler.at '2018/11/03 1349' do
   puts "merry xmas!"
 end
 
 require 'rufus-scheduler'
 scheduler = Rufus::Scheduler.new
-scheduler.every '' do
+scheduler.every '3h' do
   put "change the oil filter!"
 end
-scheduler.interval '' do
-  puts ""
+scheduler.interval '2h' do
+  puts "thinking..."
   puts sleep(rand * 1000)
   puts "thought."
 end
-scheduler.cron '' do
+scheduler.cron '00 09 * * *' do
   puts "it's 9am! good morning!"
 end
 
 
 job_id =
-  scheduler.in '' do
+  scheduler.in '10d' do
   end
-job = scheduler.job()
+job = scheduler.job(job_id)
 
 job = 
-  scheduler.schedule_in '' do
+  scheduler.schedule_in '10d' do
   end
 
 job = 
-  scheduler.in '', :job => true do
+  scheduler.in '10d', :job => true do
   end
   
-scheduler.schedule '' do; end.class
-scheduler.schedule '' do; end.class
-scheduler.repeat '' do; end.class
+scheduler.schedule '10d' do; end.class
+scheduler.schedule '2018/11/03 12:30' do; end.class
+scheduler.repeat '* * * * *' do; end.class
 
 
 scheduler.every '10m' do |job|
@@ -81,7 +83,7 @@ end
 
 class Handler
   def self.call(job, time)
-    p ""
+    p "- Hendler called for #{job.id} at #{time}"
   end
 end
 scheduler.in '10d', Handler
@@ -91,16 +93,204 @@ class OtherHandler
     @name = name
   end
   def call(job, time)
-    p ""
+    p "* #{time} - Handler #{name.inspect} called for #{job.id}"
   end
 end
 oh = OtherHandler.new('Doe')
-scheduler.every '', oh
-scheduler.in '', oh
+scheduler.every '10m', oh
+scheduler.in '3d5m', oh
+
+class MyHandler
+end
+job = scheduler.schedule_every '35m', MyHandler
+job.handler
+job.handler.count
+
+job_id =
+  scheduler.every '10m', Class.new do
+    def call(job)
+      puts ". hello #{self.inspect} at #{Time.now}"
+    end
+  end
+
+scheduler.in '10d', :timeout => '1d' do
+  begin
+  rescue Rufus::Scheduler::TimeoutError
+  end
+end
+
+scheduler.every '2d', :first_at => Time.now + 10 * 3600 do
+end
+scheduler.every '2d', :first_in => '10h' do
+end
+scheduler.cron '00 14 * * *', :first_in => '3d' do
+end
+
+job.first_at = Time.now + 10
+job.first_at = Rufus::Scheduler.aparse('2018-11-03')
+
+require 'rufus-scheduler'
+s = Rufus::Scheduler.new
+n = Time.now; p [ :scheduled_at, n, n.to_f ]
+s.every '3s', :first => :now do
+  n = Time.now; p [ :in, n, n.to_f ]
+end
+s.join
+
+scheduler.cron '5 23 * * *', :last_in => '10d' do
+end
+scheduler.every '10m', :last_at => time.now + 10 * 3600 do
+end
+scheduler.every '10m', :last_in => 10 * 3600 do
+end
+
+job.last_at = nil
+job.last_at = Rufus::Scheduler.parse('2018-11-03')
+
+scheduler.every '2d', :times => 10 do
+end
+scheduler.cron '0 23 * * *', :times => 31 do
+end
+
+scheduler.cron '0 23 * * *', :times => nilimit ? nil : 10 do
+end
+
+job =
+  scheduler.cron '0 23 * * *' do
+  end
+job.times = 10
+
+require 'rufus-scheduler'
+scheduler = Rufus::Scheduler.new
+job_id =
+  scheduler.in '10d' do
+  end
+job =
+  scheduler.schedule_in '1w' do
+  end
+job =
+  scheduler.in '1w', :job => true do
+  end
+  
+job = scheduler.schedule_in('10d') do; end
+job.id
+
+job = scheduler.schedule_in('10d', :tag => 'hello') do; end
+job.opts
+
+job = scheduler.schedule_in('10d', :tag => 'hello') do; end
+job.original
+
+job =
+  scheduler.schedule_in('10d') do
+  end
+job.handler
+job.callable
+
+class MyHandler
+  attr_reader :counter
+  def initialize
+    @counter = 0
+  end
+  def call(job, time)
+    @counter = @counter + 1
+  end
+end
+job = scheduler.schedule_in('10d', MyHandler.new)
+job.handler
+job.callable
+
+job = scheduler.schedule_in('10d', :tag => 'hello') do; end
+job.scheduled_at
+
+job = scheduler.schedule_every('10s') do; end
+job.scheduled_at
+job.last_time
+job.scheduled-at
+job.last_time
+
+scheduler.every('10s') do |job|
+  puts "job scheduled for #{job.previous_time} triggered at #{Time.now}"
+  puts "next time will be around #{job.next_time}"
+  puts "."
+end
+
+job = 
+  scheduler.schedule_every('10s') do
+  end
+job.pause
+job.paused?
+job.resume
+
+job = scheduler.schedule_in('10d') do; end
+job.tags  
+job = scheduler.schedule_in('10d', :tag => 'hello') do; end
+job.tags
+
+job =
+  @scheduler.schedule_every '1s' do |job|
+    job[:timestamp] = Time.now.to_f
+    job[:counter] ||= 0
+    job[:counter] += 1
+  end
+sleep 3.6
+job[:counter]
+job.key?(:timestamp)
+job.keys
+
+job =
+  @scheduler.schedule_every '' do |job|
+  end
+job.call
+
+require 'rufus-scheduler'
+s = Rufus::Scheduler.new
+def s.on_error(job, err)
+  p [ 'error in scheduled job', job.class, job.original, err.message ]
+resue
+  p $!
+end
+job =
+  s.schedule_in('id') do
+    fail 'again'
+  end
+job.call(true)
 
 ```
 
+
 ```ruby
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 scheduler.cron '0 22 * * 1-5 America/Chicago' do
 end
 scheduler.at '2018-11-03 14:00 Pacific/Samoa' do
