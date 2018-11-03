@@ -100,7 +100,41 @@ scheduler.in '', oh
 
 ```
 
-```
+```ruby
+
+
+
+gem 'tzinfo-data'
+require 'tzinfo/data'
+require 'rufus-scheduler'
+
+# config/initializers/scheduler.rb
+require 'rufus-scheduler'
+s = Rufus::Scheduler.singleton
+s.every '1m' do
+  Rails.logger.info "hello, #{Time.now}"
+  Rails.logger.flush
+end
+
+class SchedulerController < ApplicationController
+  def index
+    job_id =
+      Rufus::Scheduler.singleton.in '5s' do
+        Rails.logger.info "time flies, it's now #{Time.now}"
+      end
+    render :text => "scheduled job #{job_id}"
+  end
+end
+
+# config/initializers/scheduler.rb
+require 'rufus-scheduler'
+s = Rufus::Scheduler.singleton
+unless defined?(Rails::Console) || File.split($0).last == 'rake'
+  s.every '1m' do
+    Rails.logger.info "hello, #{Time.now}"
+    Rails.logger.flush
+  end
+end
 ```
 
 ```
