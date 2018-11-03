@@ -279,13 +279,26 @@ job.call(true)
 
 
 
+require 'rufus-scheduler'
+Rufus::Scheduler.parse('1w2d')
+Rufus::Scheduler.parse('1.0w1.0d')
+Rufus::Scheduler.parse('Sun Nov 18 16:01:00 2012').strftime('%c')
+Rufus::Scheduler.parse('Sun Nov 18 16:01:00 2012 Europe/Berlin').strftime('%c %z')
+Rufus::Scheduler.parse(0.1)
+Rufus::Scheduler.parse('* * * * *')
 
+require 'rufus-scheduler'
+Rufus::Scheduler.to_duration_hash(60)
+Rufus::Scheduler.to_duration_hash(62.127)
+Rufus::Scheduler.to_duration_hash(62.127, :drop, :drop_seconds => true)
 
+schduler.cron('00 12 * * mon#1') do
+end
 
-
-
-
-
+scheduler.cron('00 12 * * sun#-1') do
+end
+scheduler.cron('00 12 * * sun#L') do
+end
 
 require 'rufus-scheduler'
 Time.now
