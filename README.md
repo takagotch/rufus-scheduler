@@ -287,9 +287,12 @@ job.call(true)
 
 
 
+require 'rufus-scheduler'
+Time.now
+Rufus::Scheduler.parse('0 0 -5 * *').next_time.to_s
 
-
-
+scheduler.cron '0 0 -5 * *' do
+end
 
 scheduler.cron '0 22 * * 1-5 America/Chicago' do
 end
