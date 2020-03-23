@@ -461,5 +461,7 @@ unless defined?(Rails::Console) || File.split($0).last == 'rake'
 end
 ```
 
+```rb
+
 ```
-```
+
